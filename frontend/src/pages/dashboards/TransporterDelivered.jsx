@@ -1,0 +1,134 @@
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Truck, CheckCircle, History, Info } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const TransporterDelivered = () => {
+    const [batches, setBatches] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedHistory, setSelectedHistory] = useState(null);
+
+    useEffect(() => {
+        fetchBatches();
+    }, []);
+
+    const fetchBatches = async () => {
+        try {
+            const res = await axios.get('http://localhost:5000/api/batches');
+            // Filter batches that were delivered to either warehouse or retailer
+            const deliveredBatches = res.data.data.filter(b => 
+                b.status === 'Delivered to Warehouse' || b.status === 'Delivered to Retailer'
+            );
+            setBatches(deliveredBatches);
+        } catch (err) {
+            console.error('Error fetching batches');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="fade-in">
+            <div style={{ marginBottom: '2rem' }}>
+                <h1 style={{ fontSize: '1.8rem', fontWeight: 'bold' }}>Delivery History</h1>
+                <p style={{ color: '#5f6368' }}>View all past deliveries completed by you</p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) minmax(300px, 1fr)', gap: '2rem' }}>
+                {/* Past Deliveries List */}
+                <div className="glass-card" style={{ background: 'white', padding: '1.5rem', alignSelf: 'start' }}>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <CheckCircle size={20} color="#388e3c" />
+                        Completed Deliveries
+                    </h2>
+
+                    {loading ? (
+                        <p>Loading history...</p>
+                    ) : batches.length === 0 ? (
+                        <div style={{ textAlign: 'center', padding: '2rem 0', color: '#9aa0a6' }}>
+                            <Truck size={48} style={{ opacity: 0.5, margin: '0 auto 1rem', display: 'block' }} />
+                            <p>No completed deliveries found.</p>
+                        </div>
+                    ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            {batches.map(batch => (
+                                <div
+                                    key={batch._id}
+                                    onClick={() => setSelectedHistory(batch)}
+                                    style={{
+                                        padding: '1rem',
+                                        borderRadius: '12px',
+                                        border: '1px solid #f0f0f0',
+                                        cursor: 'pointer',
+                                        transition: 'background 0.2s',
+                                        background: selectedHistory?._id === batch._id ? '#e8f5e9' : 'transparent'
+                                    }}
+                                >
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                                        <span style={{ fontWeight: 'bold' }}>{batch.productName}</span>
+                                        <span style={{ fontSize: '0.8rem', color: '#9aa0a6' }}>#{batch.batchId}</span>
+                                    </div>
+                                    <div style={{ fontSize: '0.8rem', color: '#5f6368' }}>
+                                        Status: {batch.status}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Traceability Timeline */}
+                <div className="glass-card" style={{ background: 'white', padding: '1.5rem', alignSelf: 'start' }}>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <History size={20} color="#1976d2" />
+                        Delivery Traceability
+                    </h2>
+
+                    {selectedHistory ? (
+                        <div>
+                            <div style={{ marginBottom: '1.5rem', padding: '1rem', background: '#f8f9fa', borderRadius: '12px' }}>
+                                <p style={{ fontWeight: 'bold', margin: '0 0 0.2rem' }}>{selectedHistory.productName} ({selectedHistory.quantity} units)</p>
+                                <p style={{ fontSize: '0.8rem', color: '#5f6368' }}>Batch ID: {selectedHistory.batchId}</p>
+                            </div>
+
+                            <div style={{ paddingLeft: '1.5rem', position: 'relative' }}>
+                                {/* Timeline vertical line */}
+                                <div style={{ position: 'absolute', left: '7px', top: '5px', bottom: '5px', width: '2px', background: '#e0e0e0' }}></div>
+
+                                {selectedHistory.timeline.map((event, idx) => (
+                                    <div key={idx} style={{ position: 'relative', marginBottom: '1.5rem' }}>
+                                        <div style={{
+                                            position: 'absolute',
+                                            left: '-22px',
+                                            top: '4px',
+                                            width: '12px',
+                                            height: '12px',
+                                            borderRadius: '50%',
+                                            background: idx === 0 ? '#2e7d32' : idx === selectedHistory.timeline.length - 1 ? '#e91e63' : '#1976d2',
+                                            border: '2px solid white',
+                                            boxShadow: '0 0 0 2px #e0e0e0'
+                                        }}></div>
+                                        <div style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>{event.status}</div>
+                                        <div style={{ fontSize: '0.75rem', color: '#9aa0a6', marginBottom: '0.2rem' }}>
+                                            {new Date(event.timestamp).toLocaleString()} | {event.location}
+                                        </div>
+                                        <div style={{ fontSize: '0.8rem', color: '#5f6368' }}>
+                                            Role: {event.responsibleRole}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '200px', color: '#9aa0a6' }}>
+                            <Info size={48} style={{ marginBottom: '1rem', opacity: 0.5 }} />
+                            <p>Select a delivered batch to view its journey</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default TransporterDelivered;

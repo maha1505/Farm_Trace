@@ -147,7 +147,7 @@ const WarehouseHome = () => {
                                             <div style={{ height: '100%', width: `${fp}%`, background: color, transition: 'width 1s' }} />
                                         </div>
                                         <div style={{ fontSize: '0.72rem', color: '#9aa0a6' }}>
-                                            {batch.quantity} units · {batch.status === 'Assigned (Warehouse to Retailer)' ? '📤 Dispatching to Retailer' : '📦 In Stock'}
+                                            {batch.quantity} units · {batch.status === 'Assigned (Warehouse to Retailer)' ? ' Dispatching to Retailer' : ' In Stock'}
                                         </div>
                                     </div>
                                 );

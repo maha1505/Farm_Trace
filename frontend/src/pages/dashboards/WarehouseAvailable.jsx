@@ -23,7 +23,6 @@ const WarehouseAvailable = () => {
                 axios.get('http://localhost:5000/api/auth/users?role=Transporter')
             ]);
 
-            // Only show products ready at the Farm
             const readyBatches = batchRes.data.data.filter(b => b.status === 'Ready for Supply Chain');
             const sorted = readyBatches.sort((a, b) => a.remainingShelfLife - b.remainingShelfLife);
 

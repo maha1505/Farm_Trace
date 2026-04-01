@@ -35,29 +35,26 @@ const TransporterDashboard = () => {
             return 'In Transit';
         }
         if (currentStatus === 'In Transit') {
-            // Check previous assignment to determine final destination
             const assignedEvents = selectedBatch?.timeline.filter(e => e.status.includes('Assigned'));
             if (assignedEvents && assignedEvents.length > 0) {
                 const lastAssignment = assignedEvents[assignedEvents.length - 1];
                 if (lastAssignment.status === 'Assigned (Farm to Warehouse)') return 'Delivered to Warehouse';
                 if (lastAssignment.status === 'Assigned (Warehouse to Retailer)') return 'Delivered to Retailer';
             }
-            return 'Delivered'; // Fallback
+            return 'Delivered'; 
         }
         return null;
     };
 
-    // Map the generic "Delivered" UI label to the correct backend status
     const resolveActualStatus = (displayStatus, batch) => {
         if (displayStatus !== 'Delivered') return displayStatus;
-        // Determine destination from the batch timeline assignment history
         const assignedEvents = batch?.timeline?.filter(e => e.status.includes('Assigned')) || [];
         if (assignedEvents.length > 0) {
             const lastAssignment = assignedEvents[assignedEvents.length - 1].status;
             if (lastAssignment === 'Assigned (Farm to Warehouse)') return 'Delivered to Warehouse';
             if (lastAssignment === 'Assigned (Warehouse to Retailer)') return 'Delivered to Retailer';
         }
-        return 'Delivered to Warehouse'; // fallback
+        return 'Delivered to Warehouse'; 
     };
 
     const handleUpdateSubmit = async () => {
@@ -88,7 +85,6 @@ const TransporterDashboard = () => {
         return <PackageCheck size={20} color="#757575" />;
     };
 
-    // Filter out already delivered batches from main view
     const activeBatches = batches.filter(b => !b.status.includes('Delivered to'));
 
     return (

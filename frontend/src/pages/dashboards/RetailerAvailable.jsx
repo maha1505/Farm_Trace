@@ -22,7 +22,6 @@ const RetailerAvailable = () => {
                 axios.get('http://localhost:5000/api/auth/users?role=Transporter')
             ]);
 
-            // Only show products delivered to the warehouse (available for retailer pull)
             const availableBatches = batchRes.data.data.filter(b => b.status === 'Delivered to Warehouse');
             const sorted = availableBatches.sort((a, b) => a.remainingShelfLife - b.remainingShelfLife);
 

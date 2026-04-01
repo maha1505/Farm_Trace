@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
 import { Shield, AlertTriangle, ChevronDown, ChevronUp } from 'lucide-react';
 
-/**
- * TrustScoreBadge – reusable component for displaying a batch's Trust Score.
- * Props:
- *   score       {number}  0-100
- *   log         {Array}   [{reason, deduction}]  – deduction history
- *   compact     {boolean} – smaller pill variant (default: false)
- */
 const TrustScoreBadge = ({ score = 100, log = [], compact = false }) => {
     const [expanded, setExpanded] = useState(false);
 

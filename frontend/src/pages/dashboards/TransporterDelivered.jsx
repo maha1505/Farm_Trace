@@ -15,7 +15,6 @@ const TransporterDelivered = () => {
     const fetchBatches = async () => {
         try {
             const res = await axios.get('http://localhost:5000/api/batches');
-            // Filter batches that were delivered to either warehouse or retailer
             const deliveredBatches = res.data.data.filter(b => 
                 b.status === 'Delivered to Warehouse' || b.status === 'Delivered to Retailer'
             );

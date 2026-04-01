@@ -14,7 +14,6 @@ const WarehouseInventory = () => {
     const fetchData = async () => {
         try {
             const res = await axios.get('http://localhost:5000/api/batches');
-            // Filter for batches stored in warehouse, including those scheduled for delivery but not yet picked up
             const inventoryBatches = res.data.data.filter(b => 
                 b.status === 'Delivered to Warehouse' || b.status === 'Assigned (Warehouse to Retailer)'
             );

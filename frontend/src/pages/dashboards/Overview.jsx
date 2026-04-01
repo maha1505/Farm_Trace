@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-/* ─────────── Shared helpers ─────────── */
 const StatCard = ({ icon: Icon, label, value, color, sub }) => (
     <motion.div whileHover={{ y: -4, boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}
         className="glass-card"
@@ -48,7 +47,6 @@ const freshnessPercent = (batch) => {
     return Math.max(0, 100 - (elapsed / batch.shelfLife) * 100);
 };
 
-/* ─────────── Farmer Overview ─────────── */
 const FarmerOverview = ({ batches }) => {
     const ready = batches.filter(b => b.status === 'Ready for Supply Chain');
     const inTransit = batches.filter(b => b.status === 'Picked Up' || b.status === 'In Transit');
@@ -104,7 +102,6 @@ const FarmerOverview = ({ batches }) => {
                     })}
                 </div>
 
-                {/* Batch Status Breakdown */}
                 <div className="glass-card" style={{ background: 'white', padding: '1.5rem' }}>
                     <SectionTitle><BarChart2 size={18} color="#1976d2" /> Batch Status Breakdown</SectionTitle>
                     {Object.entries(
@@ -127,7 +124,6 @@ const FarmerOverview = ({ batches }) => {
     );
 };
 
-/* ─────────── Warehouse Manager Overview ─────────── */
 const WarehouseOverview = ({ batches }) => {
     const incoming = batches.filter(b =>
         b.status === 'Assigned (Farm to Warehouse)' || b.status === 'Picked Up' || b.status === 'In Transit'
@@ -256,7 +252,6 @@ const TransporterOverview = ({ batches }) => {
     );
 };
 
-/* ─────────── Retailer Overview ─────────── */
 const RetailerOverview = ({ batches }) => {
     const available = batches.filter(b => b.status === 'Delivered to Warehouse' || b.status === 'Assigned (Warehouse to Retailer)');
     const inTransit = batches.filter(b => b.status === 'Assigned (Warehouse to Retailer)');
@@ -315,7 +310,6 @@ const RetailerOverview = ({ batches }) => {
     );
 };
 
-/* ─────────── Main Overview ─────────── */
 const Overview = () => {
     const { user } = useAuth();
     const [batches, setBatches] = useState([]);
